@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Controller
 public class SSEController {
-    private Map<String, SseEmitter> sseEmitters = new HashMap<>();
+    private final Map<String, SseEmitter> sseEmitters = new HashMap<>();
     @Resource
     private NewOrderNotifyEventPublisherAware newOrderNotifyEventPublisherAware;
 
@@ -49,6 +49,26 @@ public class SSEController {
             NewOrderNotifyEvent newOrderNotifyEvent = new NewOrderNotifyEvent(false, body, sseEmitter);
             newOrderNotifyEventPublisherAware.publish(newOrderNotifyEvent);
         });
+
+    }
+
+    @RequestMapping("/send/all")
+    @ResponseBody
+    public void sendAll(){
+        System.out.println("sseEmitters size:"+this.sseEmitters.size());
+        this.sseEmitters.forEach((s, sseEmitter) -> {
+            Map<String, String> map = new HashMap<>(1);
+
+            map.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
+            MessageBody<Map<String, String>> body = new MessageBody<>();
+            body.setTo(s);
+            body.setFrom("SERVER");
+            body.setPayload(map);
+            NewOrderNotifyEvent newOrderNotifyEvent = new NewOrderNotifyEvent(false, body, sseEmitter);
+            newOrderNotifyEventPublisherAware.publish(newOrderNotifyEvent);
+        });
+
 
     }
 
