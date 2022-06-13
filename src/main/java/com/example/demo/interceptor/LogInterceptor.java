@@ -1,5 +1,6 @@
 package com.example.demo.interceptor;
 
+import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.ArrayUtil;
 import org.springframework.stereotype.Component;
@@ -7,6 +8,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -32,6 +35,14 @@ public class LogInterceptor implements HandlerInterceptor {
             psb.append(entry.getKey()).append("=").append(arrToString(entry.getValue()));
         }
         sb.append(psb);
+        Map<String,String> headMap = new HashMap<>();
+        Enumeration<String> enumeration = request.getHeaderNames();
+        while (enumeration.hasMoreElements()){
+            String k = enumeration.nextElement();
+            String v = request.getHeader(k);
+            headMap.put(k,v);
+        }
+        sb.append(", header:").append(JSON.toJSONString(headMap));
         return sb.toString();
     }
 

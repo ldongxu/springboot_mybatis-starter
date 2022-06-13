@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -21,14 +22,19 @@ import java.util.Optional;
 @Controller
 public class SSEController {
     private final Map<String, SseEmitter> sseEmitters = new HashMap<>();
-    @Resource
-    private NewOrderNotifyEventPublisherAware newOrderNotifyEventPublisherAware;
 
     @RequestMapping(path = "/events/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @ResponseBody
     public SseEmitter push(@PathVariable String id){
         SseEmitter sseEmitter = new SseEmitter(5*60*1000L);
         this.sseEmitters.put(id, sseEmitter);
+        sseEmitter.onTimeout(() -> {
+            System.out.println(id+" timeout");
+            sseEmitters.remove(id);
+        });
+        sseEmitter.onCompletion(()->{
+            System.out.println(id+" completion");
+        });
         return sseEmitter;
     }
 
@@ -45,9 +51,13 @@ public class SSEController {
         body.setTo(id);
         body.setPayload(map);
 
-        Optional.of(sseEmitters.get(id)).ifPresent(sseEmitter -> {
-            NewOrderNotifyEvent newOrderNotifyEvent = new NewOrderNotifyEvent(false, body, sseEmitter);
-            newOrderNotifyEventPublisherAware.publish(newOrderNotifyEvent);
+        Optional.ofNullable(sseEmitters.get(id)).ifPresent(sseEmitter -> {
+            try {
+                sseEmitter.send("sse req success");
+                sseEmitter.send(SseEmitter.event().name("test"+id).id(id).data(body));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
 
     }
@@ -65,8 +75,12 @@ public class SSEController {
             body.setTo(s);
             body.setFrom("SERVER");
             body.setPayload(map);
-            NewOrderNotifyEvent newOrderNotifyEvent = new NewOrderNotifyEvent(false, body, sseEmitter);
-            newOrderNotifyEventPublisherAware.publish(newOrderNotifyEvent);
+            try {
+                sseEmitter.send(SseEmitter.event().name("test"+s).id(s).data(body, MediaType.APPLICATION_JSON));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         });
 
 

@@ -6,11 +6,12 @@
     <artifactId>demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>springboot-demo</name>
+    <packaging>jar</packaging>
     <description>Demo project for Spring Boot</description>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.3</version>
+        <version>2.7.0</version>
     </parent>
     <properties>
         <java.version>1.8</java.version>
@@ -55,6 +56,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>2.0.6</version>
+        </dependency>
 
     </dependencies>
 
@@ -64,13 +70,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>1.18.22</version>
-                        </exclude>
-                    </excludes>
+                    <mainClass>com.example.demo.DemoApplication</mainClass>
                 </configuration>
             </plugin>
             <!-- mybatis.generator  -->
