@@ -1,8 +1,6 @@
 package com.example.demo.sse.controller;
 
 import com.example.demo.sse.entity.MessageBody;
-import com.example.demo.sse.event.NewOrderNotifyEvent;
-import com.example.demo.sse.event.NewOrderNotifyEventPublisherAware;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

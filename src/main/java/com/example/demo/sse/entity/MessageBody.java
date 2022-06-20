@@ -3,7 +3,7 @@ package com.example.demo.sse.entity;
 import lombok.Data;
 
 /**
- * @author Dax
+ * @author liudongxu
  * @since 13:51  2019/8/22
  */
 @Data

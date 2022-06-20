@@ -10,4 +10,4 @@ springboot、mybatis deom 脚手架
 
 #### 特技
 
-1.  SSE服务请求demo
+1.  springboot开发的SSE服务demo
